@@ -7,6 +7,7 @@ Before doing any coding, you should pre-list your product. This is a way to get 
 product into the Marketplace before it's ready to be launched. This allows
 tenants to show interest in your product.
 
+### Pre-listing your product
 Go to https://developer.wgtwo.com, create your organization and product, then
 fill out the product description, distribution and availability, support info, 
 legal and privacy, and finally pricing and payment sections.
@@ -20,30 +21,62 @@ on Slack if it takes more than a few minutes after you have submitted your
 product before it's approved. Once we have approved your product, everyone in your
 organization will be notified through email.
 
+### Create a new version of your product
 You will need to modify this product later, so you could go ahead and click the
 "Create a new Version" button from the "Version and status" section on the product
 summary page.
 
 ## Getting Started
-
 If you run the commands below without modifying the code, you will be running
 fully in sandbox mode. This is how developer will be spending most of their time
 while integrating with us.
 
 ### Building the project
-
 ```
 docker build -t product-starter .
 ``` 
 
 ### Running the project
-
 ```
 docker run product-starter
 ```
 
+If you run the project without modifying it, you should see a message like this:
+
+```
+[main] INFO ProductStarterApp - Application started successfully!
+[ConsentEvents-0] INFO ConsentEventClient - New consent for subscriber 4799990005
+[ConsentEvents-0] INFO SmsClient - SMS sent: from=4799990005 => to=+46724452895
+```
+
+This means that everything is working as expected, and that the application has
+successfully connected to our sandbox APIs.
+
+#### Troubleshooting
+If you get `the --mount option requires BuildKit. Refer to https://docs.docker.com/go/buildkit/ to learn how to build images with BuildKit enabled`
+when running the commands above, you need to enable BuildKit. This can be done
+by adding the following to your `~/.docker/config.json` file:
+
+```
+{
+  "features": {
+    "buildkit": true
+  }
+}
+```
+
+or by setting the `DOCKER_BUILDKIT` environment variable to `1` when running the build:
+
+```
+DOCKER_BUILDKIT=1 docker build -t product-starter .
+```
+
+If neither of these work, you can manually edit the `Dockerfile` comment out the line with --mount,
+but builds will become much slower.
+
 ### Running in production
-Finish all the TODO items in `src/main/kotlin/com/wg2/examples/ProductStarterApp.kt`,
+If you've managed to run the sandbox version, you can go ahead and 
+finish all the TODO items in `src/main/kotlin/com/wg2/examples/ProductStarterApp.kt`,
 then build and run the project as described above. Detailed instructions for
 each TODO item can be found in the "Configuring the project" section below.
 
