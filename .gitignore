@@ -1,6 +1,7 @@
 .idea
 target
 product-starter.iml
+dependency-reduced-pom.xml
 
 # Compiled class file
 *.class

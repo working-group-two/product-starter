@@ -21,24 +21,35 @@ on Slack if it takes more than a few minutes after you have submitted your
 product before it's approved. Once we have approved your product, everyone in your
 organization will be notified through email.
 
-### Create a new version of your product
+### Creating a new version of your product
 You will need to modify this product later, so you could go ahead and click the
 "Create a new Version" button from the "Version and status" section on the product
 summary page.
 
-## Getting Started
+## Getting started
 If you run the commands below without modifying the code, you will be running
 fully in sandbox mode. This is how developer will be spending most of their time
 while integrating with us.
 
 ### Building the project
+You can build the project using either Docker or Maven wrapper. The snippets below
+contain both options, and assume that you are in the root of the project:
+
 ```
+# Docker:
 docker build -t product-starter .
+
+# Maven wrapper:
+./mvnw clean package
 ``` 
 
 ### Running the project
 ```
+# Docker:
 docker run product-starter
+
+# Maven wrapper:
+java -jar target/product-starter-1.0-SNAPSHOT.jar
 ```
 
 If you run the project without modifying it, you should see a message like this:
