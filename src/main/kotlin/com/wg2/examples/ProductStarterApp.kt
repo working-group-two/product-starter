@@ -4,6 +4,7 @@ import io.grpc.ManagedChannelBuilder
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
+// This is the main application class.
 fun main() {
 
     val organizationName = "NOT_SET" // TODO: Set your organization name from Developer Portal
@@ -32,16 +33,16 @@ fun main() {
         channel,
         authInterceptor,
         onSubscriberConsent = { event ->
-            smsClient.send(
-                from = event.consentChangeEvent.number.e164,
+            smsClient.sendFromSubscriber( // send FROM subscriber
+                from = event.consentChangeEvent.number.e164, // we are sending from the subscriber that consented
                 to = jorunfaSmsForwardingSlackChannelNumber,
                 content = smsPrefix + "I, '${event.consentChangeEvent.number.e164}', have consented to use $productName"
             )
         },
         onTenantConsent = { event ->
-            smsClient.send(
-                from = productSenderId,
-                to = jorunfaSmsForwardingSlackChannelNumber,
+            smsClient.sendToSubscriber( // send TO subscriber
+                from = productSenderId, // we are sending from the product sender ID
+                to = jorunfaSmsForwardingSlackChannelNumber, // this msisdn belongs to Wotel, so we have consent to send to it
                 content = smsPrefix + "Tenant '${event.consentChangeEvent.tenant}' has enabled $productName for all their subscribers"
             )
         },

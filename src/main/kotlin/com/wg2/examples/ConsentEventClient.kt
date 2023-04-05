@@ -12,6 +12,8 @@ import com.wgtwo.api.v1.consent.ConsentEventsProto.ConsentChangeEvent.TypeCase.R
 import io.grpc.ManagedChannel
 import org.slf4j.LoggerFactory
 
+// This class is used to listen for consent events. It has two callbacks for tenant and subscriber consent events.
+// There are also events for consent revocation and consent update, but they are just logged here.
 class ConsentEventClient(
     private val channel: ManagedChannel,
     private val authInterceptor: AuthInterceptor,
@@ -25,13 +27,13 @@ class ConsentEventClient(
         when (Pair(event.consentChangeEvent.targetCase!!, event.consentChangeEvent.typeCase!!)) {
             Pair(TENANT, ADDED) -> {
                 logger.info("New consent for tenant ${event.consentChangeEvent.tenant}")
-                onTenantConsent(event)
+                onTenantConsent(event) // call the callback
             }
             Pair(TENANT, UPDATED) -> logger.info("Consent updated for tenant ${event.consentChangeEvent.tenant}")
             Pair(TENANT, REVOKED) -> logger.info("Consent revoked for tenant ${event.consentChangeEvent.tenant}")
             Pair(NUMBER, ADDED) -> {
                 logger.info("New consent for subscriber ${event.consentChangeEvent.number.e164}")
-                onSubscriberConsent(event)
+                onSubscriberConsent(event) // call the callback
             }
             Pair(NUMBER, UPDATED) -> logger.info("Consent updated for subscriber ${event.consentChangeEvent.number.e164}")
             Pair(NUMBER, REVOKED) -> logger.info("Consent revoked for subscriber ${event.consentChangeEvent.number.e164}")
@@ -46,16 +48,22 @@ class ConsentEventClient(
         Thread {
             while (!channel.isShutdown) {
                 try {
-                    ConsentEventServiceGrpc.newBlockingStub(channel)
+                    val consentEvents = ConsentEventServiceGrpc
+                        .newBlockingStub(channel)
                         .withInterceptors(authInterceptor)
-                        .streamConsentChangeEvents(request)
-                        .forEach { handleConsentEvent(it) }
+                    consentEvents.streamConsentChangeEvents(request).forEach {
+                        handleConsentEvent(it)
+                        consentEvents.ackConsentChangeEvent( // event will be replayed if we don't ack it
+                            ConsentEventsProto.AckConsentChangeEventRequest.newBuilder().setAckInfo(it.metadata.ackInfo).build()
+                        )
+                    }
+                    logger.info("Consent event listener started ...")
                 } catch (e: StatusRuntimeException) {
+                    logger.info("Exception in consent event stream, restarting in 10 seconds. Message: ${e.message}")
                     Thread.sleep(10_000) // restart after 10 seconds
                 }
             }
         }.apply { name = "ConsentEvents-0" }.start()
-        logger.info("Consent event listener started ...")
     }
 
 }
