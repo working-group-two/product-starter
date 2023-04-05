@@ -12,6 +12,10 @@ Go to https://developer.wgtwo.com, create your organization and product, then
 fill out the product description, distribution and availability, support info, 
 legal and privacy, and finally pricing and payment sections.
 
+When setting "Market availability", please choose "Limited availability", and 
+select "Wotel" as the only market. This will make your product available only
+to the Wotel tenant, so we avoid distracting real customers.
+
 Try to make it as realistic as possible. Imagine that you are a third party
 developer creating a real product. Use Google images or AI tools for
 images, use ChatGPT or similar for subtitles/descriptions.
