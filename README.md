@@ -2,6 +2,9 @@
 A starter project which shows how to interact with our Developer Portal and our APIs. 
 It also contains instructions for getting your product pre-listed and launched.
 
+The project does not require you to do any programming, you just have to update the
+config and run the existing code.
+
 ## Before getting started
 Before doing any coding, you should pre-list your product. This is a way to get your
 product into the Marketplace before it's ready to be launched. This allows
